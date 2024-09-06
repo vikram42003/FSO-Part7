@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, NavLink, Route, Routes } from "react-router-dom";
+import { Link, NavLink, Route, Routes, useMatch } from "react-router-dom";
 
 const Menu = () => {
   const padding = {
@@ -7,9 +7,15 @@ const Menu = () => {
   };
   return (
     <div>
-      <NavLink to="/" style={padding}>anecdotes</NavLink>
-      <NavLink to="/create" style={padding}>crete new</NavLink>
-      <NavLink to="/about" style={padding}>about</NavLink>
+      <NavLink to="/anecdotes" style={padding}>
+        anecdotes
+      </NavLink>
+      <NavLink to="/create" style={padding}>
+        crete new
+      </NavLink>
+      <NavLink to="/about" style={padding}>
+        about
+      </NavLink>
     </div>
   );
 };
@@ -19,11 +25,29 @@ const AnecdoteList = ({ anecdotes }) => (
     <h2>Anecdotes</h2>
     <ul>
       {anecdotes.map(anecdote => (
-        <li key={anecdote.id}>{anecdote.content}</li>
+        <li key={anecdote.id}>
+          <Link to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</Link>
+        </li>
       ))}
     </ul>
   </div>
 );
+
+const Anecdote = ({ anecdote }) => {
+  return (
+    <div>
+      <h2>
+        <b>
+          {anecdote.content} by {anecdote.author}
+        </b>
+      </h2>
+      <p>has {anecdote.votes} votes</p>
+      <p>
+        for more info see <a href={anecdote.info}>{anecdote.info}</a>
+      </p>
+    </div>
+  );
+};
 
 const About = () => (
   <div>
@@ -127,6 +151,9 @@ const App = () => {
     setAnecdotes(anecdotes.map(a => (a.id === id ? voted : a)));
   };
 
+  const match = useMatch("/anecdotes/:id");
+  const selectedAnecdote = match ? anecdotes.find(a => a.id == match.params.id) : null;
+
   return (
     <div>
       <h1>Software anecdotes</h1>
@@ -134,10 +161,14 @@ const App = () => {
 
       <Routes>
         <Route path="/" element={<AnecdoteList anecdotes={anecdotes} />} />
+        <Route path="/anecdotes">
+          <Route path="" element={<AnecdoteList anecdotes={anecdotes} />} />
+          <Route path=":id" element={<Anecdote anecdote={selectedAnecdote} />} />
+        </Route>
         <Route path="/about" element={<About />} />
         <Route path="/create" element={<CreateNew />} />
       </Routes>
-      
+
       <Footer />
     </div>
   );
