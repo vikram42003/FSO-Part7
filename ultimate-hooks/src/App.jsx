@@ -18,10 +18,26 @@ const useField = type => {
 const useResource = baseUrl => {
   const [resources, setResources] = useState([]);
 
-  // ...
+  useEffect(() => {
+    axios
+      .get(baseUrl)
+      .then(result => {
+        setResources(result.data);
+      })
+      .catch(error => {
+        console.log("Could not do initial fetching from: ", baseUrl, "\nError: ", error);
+      });
+  }, []);
 
   const create = resource => {
-    // ...
+    axios
+      .post(baseUrl, resource)
+      .then(result => {
+        setResources([...resources, result.data]);
+      })
+      .catch(error => {
+        console.log("Could not create resource URL: ", baseUrl, "\nResource: ", resource, "\nError: ", error);
+      });
   };
 
   const service = {
