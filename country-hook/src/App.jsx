@@ -18,7 +18,21 @@ const useField = type => {
 const useCountry = name => {
   const [country, setCountry] = useState(null);
 
-  useEffect(() => {});
+  useEffect(() => {
+    console.log("COUNTRY NAME IS: ", name);
+    if (name === "") return;
+    axios
+      .get(`https://studies.cs.helsinki.fi/restcountries/api/name/${name}`)
+      .then(result => {
+        setCountry({ ...result, found: true });
+        console.log(result);
+      })
+      .catch(error => {
+        console.log("Invalid country name: ", name);
+        console.log("Error: ", error);
+        setCountry({ found: false });
+      });
+  }, [name]);
 
   return country;
 };
@@ -34,10 +48,10 @@ const Country = ({ country }) => {
 
   return (
     <div>
-      <h3>{country.data.name} </h3>
-      <div>capital {country.data.capital} </div>
+      <h3>{country.data.name.common} </h3>
+      <div>capital {country.data.capital[0]} </div>
       <div>population {country.data.population}</div>
-      <img src={country.data.flag} height="100" alt={`flag of ${country.data.name}`} />
+      <img src={country.data.flags.svg} height="100" alt={`${country.data.flags.alt}`} />
     </div>
   );
 };
