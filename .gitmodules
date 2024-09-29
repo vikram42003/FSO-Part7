@@ -1,0 +1,3 @@
+[submodule "Blog-List-frontend"]
+	path = Blog-List-frontend
+	url = https://github.com/vikram42003/Blog-List-frontend
